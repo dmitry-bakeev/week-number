@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from datetime import date
+from datetime import date, datetime
 from enum import IntEnum
 
 
@@ -22,7 +22,7 @@ class OffsetDay(IntEnum):
     SUNDAY = 0
 
 
-def _get_offset_by_start_date():
+def _get_offset_by_start_date() -> int:
     start_week_day = START_DATE.weekday()
 
     for i, value in enumerate(OffsetDay):
@@ -49,7 +49,7 @@ def get_week_number_by_date(input_date: date) -> int:
     # Get week number. Consider START_DATE is Monday and week starts from Monday.
     count = (delta.days // DAYS_IN_WEEK) + START_COUNTER
 
-    # Corrective. START_DATE can be MOnday and week starts from Sunday.
+    # Corrective. START_DATE can be Monday and week starts from Sunday.
     remainder = delta.days % DAYS_IN_WEEK
     offset = _get_offset_by_start_date()
     if remainder >= offset:
