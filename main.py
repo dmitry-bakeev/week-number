@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import json
+
 from datetime import date, datetime
 from enum import IntEnum
 
@@ -6,6 +8,8 @@ from enum import IntEnum
 START_COUNTER: int = 1
 START_DATE: date = date(2019, 1, 1)  # Tuesday January 01 2019
 DAYS_IN_WEEK: int = 7
+DATE_FORMAT: str = '%Y-%m-%d'
+NEED_DATE_MSG: str = 'Need GET parameter date. Format is YYYY-MM-DD. Example ?date=2019-01-01'
 
 
 class SmallDateException(Exception):
@@ -20,6 +24,10 @@ class OffsetDay(IntEnum):
     FRIDAY = 2
     SATURDAY = 1
     SUNDAY = 0
+
+
+def parse_date(input_date_str: str) -> date:
+    return datetime.strptime(input_date_str, DATE_FORMAT).date()
 
 
 def _get_offset_by_start_date() -> int:
@@ -56,3 +64,41 @@ def get_week_number_by_date(input_date: date) -> int:
         count += 1
 
     return count
+
+
+def lambda_handler(event, context) -> dict:
+    get_params = event.get('queryStringParameters')
+
+    if not get_params:
+        return {
+            'statusCode': 400,
+            'body': json.dumps(NEED_DATE_MSG),
+        }
+
+    date_str = get_params.get('date')
+    if not date_str:
+        return {
+            'statusCode': 400,
+            'body': json.dumps(NEED_DATE_MSG),
+        }
+
+    try:
+        input_date = parse_date(date_str)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps('Need date format is YYYY-MM-DD'),
+        }
+
+    try:
+        week_number = get_week_number_by_date(input_date)
+    except SmallDateException as e:
+        return {
+            'statusCode': 400,
+            'body': json.dumps(str(e)),
+        }
+
+    return {
+        'statusCode': 400,
+        'body': json.dumps(f"Week number is {week_number}"),
+    }
