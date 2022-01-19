@@ -12,7 +12,7 @@ class GetWeekNumberByDate(unittest.TestCase):
         with self.assertRaises(SmallDateException) as context:
             get_week_number_by_date(date(2018, 1, 1))
 
-    def test_normalfirst_week(self) -> None:
+    def test_normal_first_week(self) -> None:
         input_values = (
             date(2019, 1, 1),
             date(2019, 1, 2),

@@ -57,7 +57,7 @@ def get_week_number_by_date(input_date: date) -> int:
     # Get week number. Consider START_DATE is Monday and week starts from Monday.
     count = (delta.days // DAYS_IN_WEEK) + START_COUNTER
 
-    # Corrective. START_DATE can be Monday and week starts from Sunday.
+    # Corrective. START_DATE can be not Monday and week starts from Sunday.
     remainder = delta.days % DAYS_IN_WEEK
     offset = _get_offset_by_start_date()
     if remainder >= offset:
@@ -99,6 +99,6 @@ def lambda_handler(event, context) -> dict:
         }
 
     return {
-        'statusCode': 400,
+        'statusCode': 200,
         'body': json.dumps(f"Week number is {week_number}"),
     }
